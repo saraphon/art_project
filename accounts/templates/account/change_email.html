@@ -1,0 +1,17 @@
+{% extends "account/base_account.html" %}
+
+{% block title %}เปลี่ยนอีเมล{% endblock %}
+
+{% block content %}
+<div class="bg-white p-6 rounded-xl max-w-xl mx-auto">
+  <h2 class="text-xl font-bold mb-4">เปลี่ยนอีเมล</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="mb-4">
+      <label class="block mb-1">อีเมลใหม่</label>
+      <input type="email" name="new_email" class="w-full border px-3 py-2 rounded" required>
+    </div>
+    <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded">บันทึก</button>
+  </form>
+</div>
+{% endblock %}

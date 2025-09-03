@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">รายละเอียดคำสั่งซื้อ #{{ order.id }}</h2>
+
+<p><strong>ผู้สั่งซื้อ:</strong> {{ order.user.username }}</p>
+<p><strong>วันที่สั่ง:</strong> {{ order.created_at }}</p>
+
+<table class="w-full border mt-4">
+  <thead>
+    <tr class="bg-gray-100">
+      <th class="p-2 text-left">สินค้า</th>
+      <th class="p-2 text-center">จำนวน</th>
+      <th class="p-2 text-center">ราคา/ชิ้น</th>
+      <th class="p-2 text-center">รวม</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in order.items.all %}
+    <tr class="border-t">
+      <td class="p-2">{{ item.product.name }}</td>
+      <td class="p-2 text-center">{{ item.quantity }}</td>
+      <td class="p-2 text-center">{{ item.price }} บาท</td>
+      <td class="p-2 text-center">{{ item.get_total }} บาท</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="mt-4 text-lg font-semibold">
+  รวมทั้งหมด: <span class="text-green-600">{{ order.total_price }} บาท</span>
+</div>
+{% endblock %}

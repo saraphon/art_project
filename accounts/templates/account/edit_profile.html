@@ -1,0 +1,44 @@
+{% extends "account/base_account.html" %}
+{% load widget_tweaks %}
+
+{% block title %}แก้ไขข้อมูลส่วนตัว{% endblock %}
+
+{% block content %}
+<form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-xl max-w-3xl mx-auto">
+  {% csrf_token %}
+  <h2 class="text-xl font-bold mb-4">ข้อมูลของฉัน</h2>
+
+  <div class="mb-4">
+    <label class="block text-gray-700">ชื่อผู้ใช้</label>
+    <input type="text" class="w-full px-4 py-2 border rounded" value="{{ user.username }}" disabled />
+  </div>
+
+  <div class="mb-4">
+    <label class="block text-gray-700">ชื่อ</label>
+    {{ form.first_name|add_class:"w-full px-4 py-2 border rounded" }}
+  </div>
+
+  <div class="mb-4">
+    <label class="block text-gray-700">อีเมล</label>
+    <input type="email" class="w-full px-4 py-2 border rounded" value="{{ user.email }}" disabled />
+  </div>
+
+  <div class="mb-4">
+    <label class="block text-gray-700">เบอร์โทรศัพท์</label>
+    {{ form.phone|add_class:"w-full px-4 py-2 border rounded" }}
+  </div>
+
+  <div class="mb-4">
+    <label class="block text-gray-700">รูปโปรไฟล์</label>
+    {% if user.is_authenticated and profile.avatar %}
+      <img src="{{ user.profile.avatar.url }}" class="w-20 h-20 rounded-full mb-2" />
+    {% endif %}
+    {{ form.avatar }}
+    <p class="text-xs text-gray-500 mt-1">ขนาดไฟล์สูงสุด 1MB (.JPEG, .PNG)</p>
+  </div>
+
+  <div class="mt-6">
+    <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">บันทึก</button>
+  </div>
+</form>
+{% endblock %}

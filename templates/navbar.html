@@ -1,0 +1,36 @@
+<!-- templates/navbar.html -->
+{% load static %}
+
+<nav class="bg-white shadow-sm border-b">
+  <div class="container mx-auto flex justify-between items-center py-3 px-4">
+    
+    <!-- Logo -->
+    <div class="flex items-center space-x-4">
+      <a href="{% url 'home' %}" class="text-2xl font-serif font-bold">AH</a>
+      <a href="{% url 'home' %}" class="hover:text-gray-700">Home</a>
+      <a href="{% url 'product_list' %}" class="hover:text-gray-700">Products</a>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="hidden md:flex items-center bg-gray-100 px-3 py-1 rounded-full">
+      <input type="text" placeholder="What are you looking for?" 
+             class="bg-gray-100 outline-none w-60 text-sm">
+      <button type="submit" class="text-gray-500 hover:text-gray-700">
+        🔍
+      </button>
+    </div>
+
+    <!-- Icons -->
+    <div class="flex items-center space-x-5 text-lg">
+      <a href="{% url 'wishlist' %}" title="Wishlist" class="hover:text-red-500">❤️</a>
+      <a href="#" title="Cart" class="hover:text-gray-700">🛒</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}" title="Profile" class="hover:text-gray-700">👤</a>
+        <a href="{% url 'account_logout' %}" title="Logout" class="hover:text-red-500">⎋</a>
+      {% else %}
+        <a href="{% url 'account_login' %}" title="Login" class="hover:text-blue-500">Login</a>
+      {% endif %}
+      <a href="#" title="Settings" class="hover:text-gray-700">⚙️</a>
+    </div>
+  </div>
+</nav>

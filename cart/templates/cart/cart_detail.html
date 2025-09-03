@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+{% load cart_extras %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">ตะกร้าสินค้า</h2>
+
+{% if items %}
+<!-- Form ลบสินค้า -->
+<form id="delete-form" method="post" action="{% url 'cart:cart_delete_selected' %}">
+  {% csrf_token %}
+  <table class="w-full border">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="p-2"><input type="checkbox" id="select-all"></th>
+        <th class="p-2">สินค้า</th>
+        <th class="p-2">ราคา</th>
+        <th class="p-2">จำนวน</th>
+        <th class="p-2">รวม</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr class="border-t" data-price="{{ item.product.price }}">
+        <td class="p-2 text-center">
+          <input type="checkbox" name="selected_items" value="{{ item.id }}" class="item-checkbox">
+        </td>
+        <td class="p-2 flex items-center gap-2">
+          {% if item.product.image %}
+            <img src="{{ item.product.image.url }}" class="w-12 h-12 object-cover rounded">
+          {% endif %}
+          {{ item.product.name }}
+        </td>
+        <td class="p-2">{{ item.product.price }} บาท</td>
+        <td class="p-2 flex items-center gap-2">
+          <button type="button" class="decrease px-2 bg-gray-200 rounded">-</button>
+          <input type="number" name="quantity_{{ item.id }}" value="{{ item.quantity }}" min="1"
+                 class="quantity w-12 text-center border rounded">
+          <button type="button" class="increase px-2 bg-gray-200 rounded">+</button>
+        </td>
+        <td class="p-2 item-total">{{ item.quantity|mul:item.product.price }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <div class="mt-4 flex justify-between items-center">
+    <div>
+      <strong>ราคารวมที่เลือก:</strong> 
+      <span id="selected-total">0.00</span> บาท
+    </div>
+    <div class="flex gap-2">
+      <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">
+        ลบที่เลือก
+      </button>
+    </div>
+  </div>
+</form>
+
+<!-- Form Checkout -->
+<form id="checkout-form" method="post" action="{% url 'cart:checkout_info' %}">
+  {% csrf_token %}
+  <input type="hidden" name="selected_items" id="checkout-items">
+  <div class="mt-4 flex justify-end">
+    <button type="button" id="checkout-btn" class="bg-green-500 text-white px-4 py-2 rounded">
+      ดำเนินการสั่งซื้อ
+    </button>
+  </div>
+</form>
+
+{% else %}
+  <p>ตะกร้าของคุณยังว่างอยู่</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const checkboxes = document.querySelectorAll(".item-checkbox");
+  const totalSpan = document.getElementById("selected-total");
+  const selectAll = document.getElementById("select-all");
+  const rows = document.querySelectorAll("tbody tr");
+  const checkoutBtn = document.getElementById("checkout-btn");
+  const checkoutItemsInput = document.getElementById("checkout-items");
+
+  function updateRowTotal(row) {
+    const price = parseFloat(row.dataset.price);
+    const qty = parseInt(row.querySelector(".quantity").value);
+    const rowTotal = price * qty;
+    row.querySelector(".item-total").textContent = rowTotal.toFixed(2);
+    updateTotal();
+  }
+
+  function updateTotal() {
+    let total = 0;
+    rows.forEach(row => {
+      const checkbox = row.querySelector(".item-checkbox");
+      if (checkbox.checked) {
+        total += parseFloat(row.querySelector(".item-total").textContent);
+      }
+    });
+    totalSpan.textContent = total.toFixed(2);
+  }
+
+  rows.forEach(row => {
+    const qtyInput = row.querySelector(".quantity");
+    const increaseBtn = row.querySelector(".increase");
+    const decreaseBtn = row.querySelector(".decrease");
+
+    increaseBtn.addEventListener("click", () => {
+      qtyInput.value = parseInt(qtyInput.value) + 1;
+      updateRowTotal(row);
+    });
+
+    decreaseBtn.addEventListener("click", () => {
+      if (parseInt(qtyInput.value) > 1) {
+        qtyInput.value = parseInt(qtyInput.value) - 1;
+        updateRowTotal(row);
+      }
+    });
+
+    qtyInput.addEventListener("input", () => {
+      if (qtyInput.value < 1) qtyInput.value = 1;
+      updateRowTotal(row);
+    });
+  });
+
+  checkboxes.forEach(cb => cb.addEventListener("change", updateTotal));
+  if (selectAll) {
+    selectAll.addEventListener("change", function() {
+      checkboxes.forEach(cb => cb.checked = selectAll.checked);
+      updateTotal();
+    });
+  }
+
+  // ✅ ส่ง checkbox ที่เลือกไป checkout form
+  checkoutBtn.addEventListener("click", () => {
+    const selectedIds = Array.from(checkboxes)
+                            .filter(cb => cb.checked)
+                            .map(cb => cb.value)
+                            .join(",");
+    if (!selectedIds) {
+      alert("กรุณาเลือกสินค้าอย่างน้อย 1 รายการ");
+      return;
+    }
+    checkoutItemsInput.value = selectedIds;
+    document.getElementById("checkout-form").submit();
+  });
+</script>
+{% endblock %}

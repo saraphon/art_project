@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}ที่อยู่ของฉัน{% endblock %}
+
+{% block content %}
+<div class="flex">
+  {% include 'account/sidebar.html' %}
+
+  <main class="flex-1 p-10 bg-[#c9e3e1]">
+      <h2 class="text-2xl font-bold mb-6">ที่อยู่ของฉัน</h2>
+
+      {% for addr in addresses %}
+      <div class="bg-white p-4 rounded-xl shadow mb-4 flex justify-between items-start">
+          <div>
+              <p class="font-semibold">{{ user.first_name }} | (+66) {{ user.phone|default:"- - -" }}</p>
+              <p>{{ addr.address_line }}</p>
+              <p><strong>ตำบล/แขวง:</strong> {{ addr.sub_district }}</p>
+              <p><strong>อำเภอ/เขต:</strong> {{ addr.district }}</p>
+              <p><strong>จังหวัด:</strong> {{ addr.province }}</p>
+              <p><strong>รหัสไปรษณีย์:</strong> {{ addr.postal_code }}</p>
+              <p><strong>ประเทศ:</strong> {{ addr.country }}</p>
+          </div>
+          <div>
+              <a href="{% url 'address_edit' addr.pk %}" class="text-blue-500 hover:underline">แก้ไข</a> |
+              <form action="{% url 'address_delete' addr.pk %}" method="post" class="inline">
+                  {% csrf_token %}
+                  <button type="submit" class="text-red-500 hover:underline">ลบ</button>
+              </form>
+          </div>
+      </div>
+      {% empty %}
+      <p class="text-gray-500">ยังไม่มีที่อยู่</p>
+      {% endfor %}
+
+      <div class="mt-6">
+          <a href="{% url 'address_add' %}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">+ เพิ่มที่อยู่</a>
+      </div>
+  </main>
+</div>
+{% endblock %}

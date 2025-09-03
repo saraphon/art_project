@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load cart_extras %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">ข้อมูลการสั่งซื้อ</h2>
+
+<form method="post" action="{% url 'cart:checkout_confirm' %}">
+  {% csrf_token %}
+
+  <!-- รายการสินค้าที่เลือก -->
+  <h3 class="text-xl font-semibold mb-2">สินค้าที่เลือก</h3>
+  <table class="w-full border mb-4">
+    <thead>
+      <tr class="bg-gray-100">
+        <th class="p-2">รูป</th>
+        <th class="p-2">สินค้า</th>
+        <th class="p-2">จำนวน</th>
+        <th class="p-2">ราคา/ชิ้น</th>
+        <th class="p-2">รวม</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr class="border-t">
+        <td class="p-2">
+          {% if item.product.image %}
+          <img src="{{ item.product.image.url }}" class="w-12 h-12 object-cover rounded">
+          {% endif %}
+        </td>
+        <td class="p-2">{{ item.product.name }}</td>
+        <td class="p-2">{{ item.quantity }}</td>
+        <td class="p-2">{{ item.product.price }} บาท</td>
+        <td class="p-2">{{ item.quantity|mul:item.product.price }} บาท</td>
+      </tr>
+      <input type="hidden" name="selected_items" value="{{ item.id }}">
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- ราคารวมทั้งหมด -->
+  <div class="text-right mb-6">
+    <strong>ราคารวมทั้งหมด:</strong>
+    <span class="text-xl text-green-700 font-bold">{{ items|calc_total }} บาท</span>
+  </div>
+
+  <!-- ฟอร์มข้อมูลผู้รับ -->
+  <h3 class="text-xl font-semibold mb-2">ข้อมูลผู้รับ</h3>
+  <div class="mb-2">
+    <label class="block">ชื่อ-นามสกุล:</label>
+    <input type="text" name="full_name" class="w-full border rounded px-2 py-1" required>
+  </div>
+  <div class="mb-2">
+    <label class="block">ที่อยู่:</label>
+    <textarea name="address" rows="3" class="w-full border rounded px-2 py-1" required></textarea>
+  </div>
+  <div class="mb-2">
+    <label class="block">เบอร์โทร:</label>
+    <input type="text" name="phone" class="w-full border rounded px-2 py-1" required>
+  </div>
+
+  <!-- วิธีชำระเงิน -->
+  <div class="mb-4">
+    <label class="block mb-1">วิธีชำระเงิน:</label>
+    <select name="payment_method" class="w-full border rounded px-2 py-1" required>
+      <option value="cod">เก็บเงินปลายทาง (COD)</option>
+      <option value="bank">โอนผ่านธนาคาร</option>
+      <option value="credit">บัตรเครดิต/เดบิต</option>
+    </select>
+  </div>
+
+  <div class="flex justify-between">
+    <a href="{% url 'cart:cart_detail' %}" class="bg-gray-400 text-white px-4 py-2 rounded">⬅ ย้อนกลับ</a>
+    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+      ✅ ยืนยันการสั่งซื้อ
+    </button>
+  </div>
+</form>
+{% endblock %}

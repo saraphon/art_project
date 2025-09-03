@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="text-2xl font-bold">{{ product.name }}</h2>
+
+{% if product.image %}
+  <img src="{{ product.image.url }}" class="w-64 h-64 object-cover rounded my-4">
+{% endif %}
+
+<p>{{ product.description }}</p>
+<p class="mt-2 font-semibold">{{ product.price }} บาท</p>
+
+<!-- ✅ ฟอร์มเพิ่มสินค้าไปยังตะกร้า -->
+<form method="post" action="{% url 'cart:cart_add' product.id %}">
+  {% csrf_token %}
+  <div class="flex items-center gap-2 mb-2">
+    <label for="quantity">จำนวน:</label>
+    <input type="number" name="quantity" value="1" min="1"
+           class="w-20 border rounded px-2 py-1">
+  </div>
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    ➕ เพิ่มไปยังตะกร้า
+  </button>
+</form>
+
+{% if product.seller == user %}
+  <div class="mt-4">
+    <a href="{% url 'product_edit' product.pk %}" class="text-yellow-500">แก้ไข</a> |
+    <a href="{% url 'product_delete' product.pk %}" class="text-red-500">ลบ</a>
+  </div>
+{% endif %}
+{% endblock %}

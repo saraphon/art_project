@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Art Project - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white">
+
+<!-- Navbar -->
+{% include 'navbar.html' %}
+
+<!-- Banner Section -->
+<section class="bg-[#c9e3e1] py-12">
+  <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4">
+    <div class="max-w-lg">
+      <h1 class="text-4xl font-bold mb-4">Buy your <br> handicrafts</h1>
+      <div class="flex items-center bg-white rounded-full px-4 py-2 shadow">
+        <input type="text" placeholder="What are you looking for?" 
+               class="flex-1 outline-none px-2">
+        <button class="text-gray-600">
+          🔍
+        </button>
+      </div>
+    </div>
+    <div class="mt-8 md:mt-0">
+    </div>
+  </div>
+</section>
+
+<!-- Best Selling Products -->
+<section class="container mx-auto px-4 py-12">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-2xl font-bold">New products</h2>
+    <a href="{% url 'product_list' %}" class="bg-[#c9e3e1] px-4 py-2 rounded-full hover:bg-[#b4d1cf]">
+      See more →
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+    {% for product in best_selling_products %}
+    <div class="bg-white rounded-lg shadow hover:shadow-lg overflow-hidden">
+      <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-full h-56 object-cover">
+      <div class="p-4">
+        <h3 class="font-semibold">{{ product.name }}</h3>
+        <p class="text-gray-700">{{ product.price }}฿</p>
+      </div>
+    </div>
+    {% empty %}
+      <p class="text-gray-500">No products available.</p>
+    {% endfor %}
+  </div>
+</section>
+
+</body>
+</html>

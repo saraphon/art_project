@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}ข้อมูลส่วนตัว{% endblock %}
+
+{% block content %}
+<div class="flex bg-[#c9e3e1] min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white p-6">
+    <div class="flex flex-col items-center">
+      <div class="w-20 h-20 bg-gray-300 rounded-full overflow-hidden">
+        {% if profile.avatar %}
+          <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-full h-full object-cover rounded-full">
+        {% endif %}
+      </div>
+      <p class="mt-2 font-semibold">{{ profile.user.username }}</p>
+      <a href="{% url 'edit_profile' %}" class="text-sm text-blue-500">แก้ไขข้อมูลส่วนตัว</a>
+    </div>
+
+    <nav class="mt-6 space-y-4">
+      <a href="{% url 'profile' %}" class="flex items-center gap-2 text-gray-700">
+        <span>👤</span> บัญชีของฉัน
+      </a>
+      <a href="#" class="flex items-center gap-2 text-gray-700">
+        <span>📜</span> ประวัติ
+      </a>
+      <a href="{% url 'address_list' %}" class="flex items-center gap-2 text-gray-700">
+        <span>📍</span> ที่อยู่
+      </a>
+
+      <hr class="my-4">
+
+      <p class="text-gray-500 text-sm mb-2">การตั้งค่าบัญชี</p>
+      <div class="flex flex-col space-y-2 text-sm text-gray-700">
+        <a href="#">เปลี่ยนอีเมล</a>
+        <a href="#">เปลี่ยนเบอร์</a>
+        <a href="#">เปลี่ยนรหัสผ่าน</a>
+      </div>
+
+      <hr class="my-4">
+
+      <a href="#" class="flex items-center gap-2 text-gray-700"><span>❤️</span> สินค้าที่ถูกใจ</a>
+      <a href="#" class="flex items-center gap-2 text-gray-700"><span>🧾</span> ประวัติการสั่งซื้อ</a>
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <main class="flex-1 p-10 max-w-4xl mx-auto">
+    <h2 class="text-3xl font-semibold mb-6">ข้อมูลส่วนตัว</h2>
+
+    <div class="bg-white p-6 rounded-xl shadow-md">
+      <p class="mb-4"><strong>ชื่อผู้ใช้:</strong> {{ profile.user.username }}</p>
+      <p class="mb-4"><strong>ชื่อ:</strong> {{ profile.user.first_name|default:"-" }}</p>
+      <p class="mb-4"><strong>อีเมล:</strong> {{ profile.user.email }}</p>
+      <p class="mb-4"><strong>เบอร์โทรศัพท์:</strong> {{ profile.phone|default:"-" }}</p>
+
+      {% if profile.bio %}
+      <p class="mb-4"><strong>Bio:</strong> {{ profile.bio }}</p>
+      {% endif %}
+    </div>
+
+  </main>
+</div>
+{% endblock %}

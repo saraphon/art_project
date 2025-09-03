@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load orders_extras %} 
+
+{% block content %}
+<h2 class="text-2xl font-bold mb-6">ประวัติการสั่งซื้อ</h2>
+
+{% if orders %}
+  <div class="space-y-6">
+    {% for order in orders %}
+      <div class="bg-white p-4 rounded-xl shadow">
+        <!-- ข้อมูล Order -->
+        <div class="flex justify-between items-center border-b pb-2 mb-2">
+          <div>
+            <p class="font-semibold">รหัสคำสั่งซื้อ: #{{ order.id }}</p>
+            <p class="text-sm text-gray-500">วันที่สั่ง: {{ order.created_at|date:"d M Y H:i" }}</p>
+            <p>ชื่อผู้สั่ง: {{ order.full_name }}</p>
+            <p>เบอร์โทร: {{ order.phone }}</p>
+            <p>ที่อยู่จัดส่ง: {{ order.address }}</p>
+          </div>
+          <span class="px-2 py-1 text-sm rounded 
+            {% if order.status == 'pending' %} bg-yellow-100 text-yellow-700
+            {% elif order.status == 'paid' %} bg-green-100 text-green-700
+            {% elif order.status == 'shipped' %} bg-blue-100 text-blue-700
+            {% elif order.status == 'cancelled' %} bg-red-100 text-red-700
+            {% endif %}">
+            {{ order.get_status_display }}
+          </span>
+        </div>
+
+        <!-- ตารางรายการสินค้า -->
+        <table class="w-full border">
+          <thead class="bg-gray-100">
+            <tr>
+              <th class="p-2 text-left">สินค้า</th>
+              <th class="p-2 text-center">จำนวน</th>
+              <th class="p-2 text-center">ราคา/ชิ้น</th>
+              <th class="p-2 text-center">รวม</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in order.items.all %}
+            <tr class="border-t">
+              <td class="p-2 flex items-center gap-2">
+                {% if item.product.image %}
+                  <img src="{{ item.product.image.url }}" class="w-10 h-10 object-cover rounded">
+                {% endif %}
+                {{ item.product.name }}
+              </td>
+              <td class="p-2 text-center">{{ item.quantity }}</td>
+              <td class="p-2 text-center">{{ item.price }} บาท</td>
+              <td class="p-2 text-center">{{ item.quantity|mul:item.price }} บาท</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="text-right mt-3 font-semibold">
+          รวมทั้งหมด: {{ order.total_price }} บาท
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="text-gray-600">ยังไม่มีประวัติการสั่งซื้อ</p>
+{% endif %}
+{% endblock %}
