@@ -136,7 +136,7 @@ def checkout(request):
         items.delete()
 
         messages.success(request, f"สร้างคำสั่งซื้อ #{order.id} เรียบร้อย ✅")
-        return redirect("order_history")
+        return redirect("orders:order_history")  # ✅ เปลี่ยนให้ตรง namespace
 
     return redirect("cart:cart_detail")   # ✅
 
@@ -154,8 +154,6 @@ def checkout_info(request):
             "items": items  # ส่ง CartItem objects ให้ template
         })
     return redirect("cart:cart_detail")
-
-
 
 
 @login_required
@@ -193,10 +191,14 @@ def checkout_confirm(request):
 
         order.total_price = total
         order.save()
-
         items.delete()
 
+        if payment_method in ("card", "บัตรเครดิต/เดบิต"):
+            return redirect("payments:create_checkout_session", order.id)
+
         messages.success(request, f"สร้างคำสั่งซื้อ #{order.id} เรียบร้อย ✅ (ชำระผ่าน {payment_method})")
-        return redirect("order_history")
+        return redirect("orders:order_history")  # ✅ เปลี่ยนให้ตรง namespace
 
     return redirect("cart:cart_detail")   # ✅
+
+

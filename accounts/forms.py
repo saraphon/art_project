@@ -60,21 +60,43 @@ class ProfileForm(forms.ModelForm):
 
 # ✅ ฟอร์มสำหรับสมัครสมาชิก (Allauth)
 class CustomSignupForm(SignupForm):
-    full_name = forms.CharField(max_length=150, label="ชื่อ")
-    phone = forms.CharField(max_length=20, label="เบอร์โทรศัพท์")
+    full_name = forms.CharField(max_length=150, label="ชื่อ", required=False)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # ชื่อฟิลด์เป็นไทย
+        self.fields["email"].label = "อีเมล"
+        self.fields["username"].label = "ชื่อผู้ใช้"
+        self.fields["password1"].label = "รหัสผ่าน"
+        self.fields["password2"].label = "ยืนยันรหัสผ่าน"
+
+        # ซ่อน help_text ของรหัสผ่าน (ที่เป็นอังกฤษยาว ๆ)
+        self.fields["password1"].help_text = ""
+        self.fields["password2"].help_text = ""
+
+        # ใส่คลาส/placeholder ให้ดูเป็นไทย
+        base_classes = "w-full px-4 py-2 border rounded bg-white focus:outline-none focus:ring"
+        placeholders = {
+            "email": "อีเมล",
+            "username": "ชื่อผู้ใช้",
+            "full_name": "ชื่อ",
+            "password1": "รหัสผ่าน",
+            "password2": "ยืนยันรหัสผ่าน",
+        }
+        for name, field in self.fields.items():
+            widget = field.widget
+            if getattr(widget, "input_type", "") != "checkbox":
+                widget.attrs["class"] = (widget.attrs.get("class", "") + " " + base_classes).strip()
+            if name in placeholders:
+                widget.attrs.setdefault("placeholder", placeholders[name])
 
     def save(self, request):
         user = super().save(request)
-        user.first_name = self.cleaned_data.get('full_name')
+        user.first_name = self.cleaned_data.get("full_name", "")
         user.save()
-
-        # บันทึกเบอร์โทรไว้ในโปรไฟล์
-        Profile.objects.update_or_create(
-            user=user,
-            defaults={'phone': self.cleaned_data.get('phone')}  # ✅ แก้ phon -> phone
-        )
+        Profile.objects.update_or_create(user=user, defaults={})
         return user
-
 
 class AddressForm(forms.ModelForm):
     class Meta:

@@ -1,32 +1,125 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}รายละเอียดคำสั่งซื้อ #{{ order.id }}{% endblock %}
+
 {% block content %}
-<h2 class="text-2xl font-bold mb-4">รายละเอียดคำสั่งซื้อ #{{ order.id }}</h2>
+<section class="max-w-4xl mx-auto p-4">
+  <div class="flex items-center justify-between mb-4">
+    <h1 class="text-2xl font-semibold">คำสั่งซื้อ #{{ order.id }}</h1>
+    <a href="{% url 'orders:order_history' %}" class="text-blue-600 hover:underline">← กลับไปประวัติ</a>
+  </div>
 
-<p><strong>ผู้สั่งซื้อ:</strong> {{ order.user.username }}</p>
-<p><strong>วันที่สั่ง:</strong> {{ order.created_at }}</p>
+  <div class="grid md:grid-cols-2 gap-4 mb-6">
+    <div class="bg-white rounded-lg shadow p-4">
+      <h2 class="font-medium mb-2">ข้อมูลผู้รับ</h2>
+      <div class="text-sm text-gray-700 space-y-1">
+        <div><span class="text-gray-500">ชื่อผู้รับ:</span> {{ order.full_name }}</div>
+        <div><span class="text-gray-500">ที่อยู่:</span> {{ order.address }}</div>
+        <div><span class="text-gray-500">โทร:</span> {{ order.phone }}</div>
+      </div>
+    </div>
 
-<table class="w-full border mt-4">
-  <thead>
-    <tr class="bg-gray-100">
-      <th class="p-2 text-left">สินค้า</th>
-      <th class="p-2 text-center">จำนวน</th>
-      <th class="p-2 text-center">ราคา/ชิ้น</th>
-      <th class="p-2 text-center">รวม</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for item in order.items.all %}
-    <tr class="border-t">
-      <td class="p-2">{{ item.product.name }}</td>
-      <td class="p-2 text-center">{{ item.quantity }}</td>
-      <td class="p-2 text-center">{{ item.price }} บาท</td>
-      <td class="p-2 text-center">{{ item.get_total }} บาท</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    <div class="bg-white rounded-lg shadow p-4">
+      <h2 class="font-medium mb-2">สถานะคำสั่งซื้อ</h2>
+      <div class="text-sm text-gray-700 space-y-2">
+        <div>
+          <span class="text-gray-500">สถานะ:</span>
+          <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs
+            {% if order.status == 'paid' %}bg-green-100 text-green-700
+            {% elif order.status == 'pending' %}bg-yellow-100 text-yellow-700
+            {% elif order.status == 'cancelled' %}bg-red-100 text-red-700
+            {% else %}bg-gray-100 text-gray-700{% endif %}">
+            {{ order.status|title }}
+          </span>
+        </div>
+        {% if order.created_at %}
+        <div><span class="text-gray-500">วันที่สั่ง:</span> {{ order.created_at|date:"Y-m-d H:i" }}</div>
+        {% endif %}
+        <div><span class="text-gray-500">ยอดรวม:</span> {{ total|floatformat:2 }}</div>
+      </div>
 
-<div class="mt-4 text-lg font-semibold">
-  รวมทั้งหมด: <span class="text-green-600">{{ order.total_price }} บาท</span>
-</div>
+      {# ✅ แสดงปุ่มชำระเงินเฉพาะเมื่อยังค้างชำระ #}
+      {% if order.status == 'pending' %}
+        <hr class="my-4">
+        <form method="post" action="{% url 'payments:create_checkout_session' order.id %}" id="pay-form" class="space-y-2">
+          {% csrf_token %}
+          <button type="submit"
+                  class="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700">
+            ชำระเงินด้วยบัตร (Stripe Test)
+          </button>
+          <p class="text-xs text-gray-500">
+            ใช้บัตรทดสอบ 4242 4242 4242 4242 • วันหมดอายุอนาคต • CVC 3 หลัก
+          </p>
+        </form>
+
+        <script>
+          (function () {
+            const form = document.getElementById('pay-form');
+            form.addEventListener('submit', async function (e) {
+              e.preventDefault();
+
+              // ดึง CSRF token จาก input ที่ Django ใส่ให้
+              const csrfInput = form.querySelector('input[name="csrfmiddlewaretoken"]');
+              const csrfToken = csrfInput ? csrfInput.value : '';
+
+              try {
+                const res = await fetch(form.action, {
+                  method: 'POST',
+                  headers: { 'X-CSRFToken': csrfToken },
+                });
+                if (!res.ok) {
+                  const txt = await res.text();
+                  alert('ไม่สามารถเปิด Stripe Checkout ได้: ' + txt);
+                  return;
+                }
+                const data = await res.json();
+                if (data.url) {
+                  window.location.href = data.url; // ไปหน้า Stripe Checkout
+                } else {
+                  alert(data.error || 'ไม่สามารถเปิด Stripe Checkout ได้');
+                }
+              } catch (err) {
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Stripe');
+              }
+            });
+          })();
+        </script>
+      {% endif %}
+      {# /ปุ่มชำระเงิน #}
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead>
+        <tr class="bg-gray-50 text-gray-600">
+          <th class="px-4 py-3 text-left">สินค้า</th>
+          <th class="px-4 py-3 text-right">ราคา</th>
+          <th class="px-4 py-3 text-right">จำนวน</th>
+          <th class="px-4 py-3 text-right">รวม</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for it in items %}
+        <tr class="border-t">
+          <td class="px-4 py-3">{{ it.product.name }}</td>
+          <td class="px-4 py-3 text-right">{{ it.price|floatformat:2 }}</td>
+          <td class="px-4 py-3 text-right">{{ it.quantity }}</td>
+          <td class="px-4 py-3 text-right">
+            {# ถ้ามี mathfilters สามารถใช้ it.price|mul:it.quantity ได้ #}
+            {{ it.price|floatformat:2 }} × {{ it.quantity }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr class="border-t font-medium">
+          <td class="px-4 py-3 text-right" colspan="3">ยอดสุทธิ</td>
+          <td class="px-4 py-3 text-right">{{ total|floatformat:2 }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</section>
 {% endblock %}

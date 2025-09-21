@@ -30,7 +30,7 @@ def edit_profile(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'บันทึกข้อมูลเรียบร้อยแล้ว ✅')
-            return redirect('profile')
+            return redirect('accounts:profile')
     else:
         form = ProfileForm(instance=profile, user=request.user)
 

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}เข้าสู่ระบบ{% endblock %}</title>
+
+  <!-- ใช้ stylesheet เดียวกับ base.html เพื่อให้ฟอนต์/สี/ขนาดเหมือนกัน -->
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+  <!-- ถ้าโปรเจกต์ปกติใช้ Tailwind CDN อยู่ด้วย ให้คงไว้ -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<!-- py-20 เพื่อให้ตำแหน่งกล่องลงมาตรง ๆ ใกล้เคียงหน้าปกติที่มี navbar -->
+<body class="bg-gray-100 min-h-screen">
+  <main class="container mx-auto px-4 py-20 flex justify-center">
+    <div class="w-full max-w-md">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</body>
+</html>
