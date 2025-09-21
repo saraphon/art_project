@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="max-w-xl mx-auto p-6 bg-white rounded shadow">
+  <h1 class="text-2xl font-semibold mb-3">ชำระเงินสำเร็จ ✅</h1>
+  <p>คำสั่งซื้อ #{{ order.id }} สถานะ: <b>{{ order.status|title }}</b></p>
+  <div class="mt-4">
+    <a class="text-blue-600 hover:underline" href="{% url 'orders:order_detail' order.id %}">ดูรายละเอียดคำสั่งซื้อ</a>
+  </div>
+</section>
+{% endblock %}

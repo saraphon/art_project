@@ -13,7 +13,10 @@
       {% for addr in addresses %}
       <div class="bg-white p-4 rounded-xl shadow mb-4 flex justify-between items-start">
           <div>
-              <p class="font-semibold">{{ user.first_name }} | (+66) {{ user.phone|default:"- - -" }}</p>
+              <p class="font-semibold">
+                {{ user.first_name|default:user.username }}
+                | (+66) {{ user.profile.phone|default:"- - -" }}
+              </p>
               <p>{{ addr.address_line }}</p>
               <p><strong>ตำบล/แขวง:</strong> {{ addr.sub_district }}</p>
               <p><strong>อำเภอ/เขต:</strong> {{ addr.district }}</p>
@@ -22,8 +25,9 @@
               <p><strong>ประเทศ:</strong> {{ addr.country }}</p>
           </div>
           <div>
-              <a href="{% url 'address_edit' addr.pk %}" class="text-blue-500 hover:underline">แก้ไข</a> |
-              <form action="{% url 'address_delete' addr.pk %}" method="post" class="inline">
+              <!-- ✅ ใส่ namespace และส่ง pk -->
+              <a href="{% url 'accounts:address_edit' addr.pk %}" class="text-blue-500 hover:underline">แก้ไข</a> |
+              <form action="{% url 'accounts:address_delete' addr.pk %}" method="post" class="inline">
                   {% csrf_token %}
                   <button type="submit" class="text-red-500 hover:underline">ลบ</button>
               </form>
@@ -34,7 +38,10 @@
       {% endfor %}
 
       <div class="mt-6">
-          <a href="{% url 'address_add' %}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">+ เพิ่มที่อยู่</a>
+          <!-- ✅ ใส่ namespace -->
+          <a href="{% url 'accounts:address_add' %}" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+            + เพิ่มที่อยู่
+          </a>
       </div>
   </main>
 </div>

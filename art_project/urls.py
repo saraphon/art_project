@@ -16,24 +16,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
 from django.conf import settings
 from django.conf.urls.static import static
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('accounts/', include('allauth.urls')),  # allauth login/logout/signup
-    path('', include('accounts.urls')),           # หน้า home, profile, edit_profile
-    path('o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
-    path('products/', include('products.urls')),
-    path('cart/', include('cart.urls')),
-    path("orders/", include("orders.urls")),
 
+    # allauth
+    path('accounts/', include('allauth.urls')),
 
+    # ✅ include accounts พร้อม namespace = "accounts"
+    path('', include(('accounts.urls', 'accounts'), namespace='accounts')),
+
+    path('o/', include(('oauth2_provider.urls', 'oauth2_provider'), namespace='oauth2_provider')),
+
+    path('products/', include(('products.urls', 'products'), namespace='products')),
+    path('cart/', include(('cart.urls', 'cart'), namespace='cart')),
+    path('orders/', include(('orders.urls', 'orders'), namespace='orders')),
+    path('payments/', include(('payments.urls', 'payments'), namespace='payments')),
 ]
 
-
-
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # pyright: ignore[reportUndefinedVariable]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

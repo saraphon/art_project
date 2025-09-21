@@ -12,11 +12,11 @@
   <!-- Navbar -->
   <nav class="bg-white shadow-md p-4">
     <div class="container mx-auto flex justify-between items-center">
-      <a href="{% url 'home' %}" class="text-xl font-semibold text-gray-800">Art Project</a>
+      <a href="{% url 'accounts:home' %}" class="text-xl font-semibold text-gray-800">Art Project</a>
       <div class="space-x-4">
         {% if user.is_authenticated %}
           <span class="text-gray-700">สวัสดี, {{ user.username }}</span>
-          <a href="{% url 'edit_profile' %}" class="text-blue-500 hover:underline">แก้ไขโปรไฟล์</a>
+          <a href="{% url 'accounts:edit_profile' %}" class="text-blue-500 hover:underline">แก้ไขโปรไฟล์</a>
           <a href="{% url 'account_logout' %}" class="text-red-500 hover:underline">ออกจากระบบ</a>
         {% else %}
           <a href="{% url 'account_login' %}" class="text-blue-500 hover:underline">เข้าสู่ระบบ</a>

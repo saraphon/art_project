@@ -15,17 +15,19 @@
         {% endif %}
       </div>
       <p class="mt-2 font-semibold">{{ profile.user.username }}</p>
-      <a href="{% url 'edit_profile' %}" class="text-sm text-blue-500">แก้ไขข้อมูลส่วนตัว</a>
+      <a href="{% url 'accounts:edit_profile' %}" class="text-sm text-blue-500">แก้ไขข้อมูลส่วนตัว</a>
     </div>
 
     <nav class="mt-6 space-y-4">
-      <a href="{% url 'profile' %}" class="flex items-center gap-2 text-gray-700">
+      <a href="{% url 'accounts:profile' %}" class="flex items-center gap-2 text-gray-700">
         <span>👤</span> บัญชีของฉัน
       </a>
-      <a href="#" class="flex items-center gap-2 text-gray-700">
+
+      <a href="{% url 'orders:order_history' %}" class="flex items-center gap-2 text-gray-700">
         <span>📜</span> ประวัติ
       </a>
-      <a href="{% url 'address_list' %}" class="flex items-center gap-2 text-gray-700">
+
+      <a href="{% url 'accounts:address_list' %}" class="flex items-center gap-2 text-gray-700">
         <span>📍</span> ที่อยู่
       </a>
 
@@ -33,15 +35,15 @@
 
       <p class="text-gray-500 text-sm mb-2">การตั้งค่าบัญชี</p>
       <div class="flex flex-col space-y-2 text-sm text-gray-700">
-        <a href="#">เปลี่ยนอีเมล</a>
-        <a href="#">เปลี่ยนเบอร์</a>
-        <a href="#">เปลี่ยนรหัสผ่าน</a>
+        <a href="{% url 'account_email' %}">เปลี่ยนอีเมล</a>
+        <a href="{% url 'accounts:change_phone' %}">เปลี่ยนเบอร์</a>
+        <a href="{% url 'account_change_password' %}">เปลี่ยนรหัสผ่าน</a>
       </div>
 
       <hr class="my-4">
 
-      <a href="#" class="flex items-center gap-2 text-gray-700"><span>❤️</span> สินค้าที่ถูกใจ</a>
-      <a href="#" class="flex items-center gap-2 text-gray-700"><span>🧾</span> ประวัติการสั่งซื้อ</a>
+      <a href="<a href="{% url 'accounts:wishlist' %}" class="flex items-center gap-2 text-gray-700"><span>❤️</span> สินค้าที่ถูกใจ</a>
+      <a href="{% url 'orders:order_history' %}" class="flex items-center gap-2 text-gray-700"><span>🧾</span> ประวัติการสั่งซื้อ</a>
     </nav>
   </aside>
 

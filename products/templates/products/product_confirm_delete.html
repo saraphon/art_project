@@ -5,6 +5,6 @@
 <form method="POST">
   {% csrf_token %}
   <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">ลบ</button>
-  <a href="{% url 'product_list' %}" class="ml-2">ยกเลิก</a>
+  <a href={% url 'products:product_list' %} class="ml-2">ยกเลิก</a>
 </form>
 {% endblock %}

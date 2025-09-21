@@ -1,44 +1,99 @@
-{% extends "account/base_account.html" %}
+{% extends "base.html" %}
+{% load static %}
 {% load widget_tweaks %}
 
 {% block title %}แก้ไขข้อมูลส่วนตัว{% endblock %}
 
 {% block content %}
-<form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-xl max-w-3xl mx-auto">
-  {% csrf_token %}
-  <h2 class="text-xl font-bold mb-4">ข้อมูลของฉัน</h2>
+<div class="flex bg-[#c9e3e1] min-h-screen">
 
-  <div class="mb-4">
-    <label class="block text-gray-700">ชื่อผู้ใช้</label>
-    <input type="text" class="w-full px-4 py-2 border rounded" value="{{ user.username }}" disabled />
-  </div>
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white p-6">
+    <div class="flex flex-col items-center">
+      <div class="w-20 h-20 bg-gray-300 rounded-full overflow-hidden">
+        {% if profile.avatar %}
+          <img src="{{ profile.avatar.url }}" alt="Avatar" class="w-full h-full object-cover rounded-full">
+        {% endif %}
+      </div>
+      <p class="mt-2 font-semibold">{{ profile.user.username }}</p>
+      <a href="{% url 'accounts:edit_profile' %}" class="text-sm text-blue-500">แก้ไขข้อมูลส่วนตัว</a>
+    </div>
 
-  <div class="mb-4">
-    <label class="block text-gray-700">ชื่อ</label>
-    {{ form.first_name|add_class:"w-full px-4 py-2 border rounded" }}
-  </div>
+    <nav class="mt-6 space-y-4">
+      <a href="{% url 'accounts:profile' %}" class="flex items-center gap-2 text-gray-700">
+        <span>👤</span> บัญชีของฉัน
+      </a>
 
-  <div class="mb-4">
-    <label class="block text-gray-700">อีเมล</label>
-    <input type="email" class="w-full px-4 py-2 border rounded" value="{{ user.email }}" disabled />
-  </div>
+      <a href="{% url 'orders:order_history' %}" class="flex items-center gap-2 text-gray-700">
+        <span>📜</span> ประวัติ
+      </a>
 
-  <div class="mb-4">
-    <label class="block text-gray-700">เบอร์โทรศัพท์</label>
-    {{ form.phone|add_class:"w-full px-4 py-2 border rounded" }}
-  </div>
+      <a href="{% url 'accounts:address_list' %}" class="flex items-center gap-2 text-gray-700">
+        <span>📍</span> ที่อยู่
+      </a>
 
-  <div class="mb-4">
-    <label class="block text-gray-700">รูปโปรไฟล์</label>
-    {% if user.is_authenticated and profile.avatar %}
-      <img src="{{ user.profile.avatar.url }}" class="w-20 h-20 rounded-full mb-2" />
-    {% endif %}
-    {{ form.avatar }}
-    <p class="text-xs text-gray-500 mt-1">ขนาดไฟล์สูงสุด 1MB (.JPEG, .PNG)</p>
-  </div>
+      <hr class="my-4">
 
-  <div class="mt-6">
-    <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">บันทึก</button>
-  </div>
-</form>
+      <p class="text-gray-500 text-sm mb-2">การตั้งค่าบัญชี</p>
+      <div class="flex flex-col space-y-2 text-sm text-gray-700">
+        <a href="{% url 'account_email' %}">เปลี่ยนอีเมล</a>
+        <a href="{% url 'accounts:change_phone' %}">เปลี่ยนเบอร์</a>
+        <a href="{% url 'account_change_password' %}">เปลี่ยนรหัสผ่าน</a>
+      </div>
+
+      <hr class="my-4">
+
+      <a href="{% url 'accounts:wishlist' %}" class="flex items-center gap-2 text-gray-700">
+        <span>❤️</span> สินค้าที่ถูกใจ
+      </a>
+      <a href="{% url 'orders:order_history' %}" class="flex items-center gap-2 text-gray-700">
+        <span>🧾</span> ประวัติการสั่งซื้อ
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main content: ฟอร์มแก้ไข -->
+  <main class="flex-1 p-10 max-w-4xl mx-auto">
+    <h2 class="text-3xl font-semibold mb-6">แก้ไขข้อมูลส่วนตัว</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded-xl shadow-md space-y-4">
+      {% csrf_token %}
+
+      <div>
+        <label class="block text-gray-700 mb-1">ชื่อผู้ใช้</label>
+        <input type="text" value="{{ user.username }}" class="w-full px-4 py-2 border rounded bg-gray-100" disabled>
+      </div>
+
+      <div>
+        <label class="block text-gray-700 mb-1">ชื่อ</label>
+        {{ form.first_name|add_class:"w-full px-4 py-2 border rounded" }}
+      </div>
+
+      <div>
+        <label class="block text-gray-700 mb-1">อีเมล</label>
+        <input type="email" value="{{ user.email }}" class="w-full px-4 py-2 border rounded bg-gray-100" disabled>
+      </div>
+
+      <div>
+        <label class="block text-gray-700 mb-1">เบอร์โทรศัพท์</label>
+        {{ form.phone|add_class:"w-full px-4 py-2 border rounded" }}
+      </div>
+
+      <div>
+        <label class="block text-gray-700 mb-1">รูปโปรไฟล์</label>
+        {% if profile.avatar %}
+          <img src="{{ profile.avatar.url }}" class="w-20 h-20 rounded-full mb-2 object-cover" alt="">
+        {% endif %}
+        {{ form.avatar }}
+        <p class="text-xs text-gray-500 mt-1">ขนาดไฟล์สูงสุด 1MB (.JPEG, .PNG)</p>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="bg-gray-700 text-white px-5 py-2 rounded hover:bg-gray-800">
+          บันทึก
+        </button>
+      </div>
+    </form>
+  </main>
+</div>
 {% endblock %}

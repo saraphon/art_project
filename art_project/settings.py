@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'products',
     'cart',
     'orders', 
+    'payments',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -171,3 +172,12 @@ ACCOUNT_EMAIL_VERIFICATION = 'none'
 #ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_SIGNUP_FIELDS = ['email', 'username*', 'password1*', 'password2*']
 
+import environ, os # type: ignore
+
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+STRIPE_PUBLISHABLE_KEY = env("STRIPE_PUBLISHABLE_KEY", default="")
+STRIPE_SECRET_KEY = env("STRIPE_SECRET_KEY", default="")
+STRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET", default="")
+SITE_URL = env("SITE_URL", default="http://127.0.0.1:8000")

@@ -23,9 +23,20 @@
 </form>
 
 {% if product.seller == user %}
-  <div class="mt-4">
-    <a href="{% url 'product_edit' product.pk %}" class="text-yellow-500">แก้ไข</a> |
-    <a href="{% url 'product_delete' product.pk %}" class="text-red-500">ลบ</a>
+  <div class="mt-4 flex gap-3">
+    <a href="{% url 'products:product_edit' product.pk %}" 
+       class="px-3 py-2 rounded bg-yellow-500 text-white hover:bg-yellow-600">
+        แก้ไข
+    </a>
+
+    <form method="post" action="{% url 'products:product_delete' product.pk %}"
+          onsubmit="return confirm('ยืนยันลบสินค้านี้?')">
+      {% csrf_token %}
+      <button type="submit" 
+              class="px-3 py-2 rounded bg-red-600 text-white hover:bg-red-700">
+         ลบ
+      </button>
+    </form>
   </div>
 {% endif %}
 {% endblock %}
