@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-[1200px] mx-auto flex bg-[#c9e3e1] min-h-screen">
+  {% include "account/sidebar.html" %}
+
+  <main class="flex-1 p-10">
+    <!-- ✅ Messages -->
+    {% if messages %}
+      <div class="mb-4 space-y-2">
+        {% for m in messages %}
+          <div class="px-4 py-2 rounded
+                      {% if m.tags == 'success' %}bg-green-50 text-green-700
+                      {% elif m.tags == 'error' %}bg-red-50 text-red-700
+                      {% elif m.tags == 'warning' %}bg-yellow-50 text-yellow-700
+                      {% else %}bg-gray-50 text-gray-700{% endif %}">
+            {{ m }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+    <!-- /Messages -->
+
+    <h1 class="text-3xl font-bold mb-6">{% block page_title %}{% endblock %}</h1>
+
+    <div class="max-w-[760px] w-full mx-auto bg-white rounded-xl shadow p-6">
+      {% block page_body %}{% endblock %}
+    </div>
+  </main>
+</div>
+{% endblock %}

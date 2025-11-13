@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<h2 class="text-2xl font-bold mb-4">{{ title }}</h2>
+<form method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow max-w-lg">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">บันทึก</button>
+</form>
+{% endblock %}

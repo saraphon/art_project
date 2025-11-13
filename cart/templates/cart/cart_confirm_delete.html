@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow mt-10">
+  <h2 class="text-xl font-bold mb-4">ลบตะกร้าสินค้า</h2>
+  <p>คุณต้องการลบสินค้าทั้งหมดในตะกร้าใช่ไหม?</p>
+
+  <form method="post" action="{% url 'cart:cart_delete' %}" class="mt-4">
+    {% csrf_token %}
+    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+      ลบทั้งหมด
+    </button>
+    <a href="{% url 'cart:cart_detail' %}" class="ml-4 text-gray-600 hover:underline">ยกเลิก</a>
+</form>
+
+</div>
+{% endblock %}

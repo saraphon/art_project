@@ -1,0 +1,52 @@
+{% extends "base_auth.html" %}
+{% block title %}สมัครสมาชิก{% endblock %}
+
+{% block content %}
+<div class="w-full max-w-md bg-white rounded-2xl shadow p-6">
+  <h1 class="text-2xl font-semibold text-center mb-6">สมัครสมาชิก</h1>
+
+  {# ✅ แสดง error รวม ๆ เช่น รหัสผ่านไม่ตรง, ชื่อผู้ใช้ซ้ำ #}
+  {% if form.non_field_errors %}
+    <div class="mb-4 p-3 rounded bg-red-50 text-red-700 text-sm">
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <form method="post" action="{% url 'account_signup' %}">
+    {% csrf_token %}
+
+    {# ✅ วนฟิลด์จากฟอร์มโดยตรง เพื่อไม่พลาดชื่อฟิลด์/required #}
+    {% for field in form %}
+      <div class="mb-4">
+        <label for="{{ field.id_for_label }}" class="block text-sm text-gray-700 mb-1">
+          {{ field.label }}
+        </label>
+        {{ field }}
+        {% if field.help_text %}
+          <p class="text-xs text-gray-500">{{ field.help_text|safe }}</p>
+        {% endif %}
+        {% for error in field.errors %}
+          <p class="text-sm text-red-600">{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    {# ✅ รองรับ redirect ของ allauth #}
+    {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+    {% endif %}
+
+    <button type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg">
+      สมัครสมาชิก
+    </button>
+  </form>
+
+  <div class="text-sm text-center mt-4">
+    มีบัญชีอยู่แล้ว?
+    <a class="text-blue-600 hover:underline" href="{% url 'account_login' %}">
+      เข้าสู่ระบบ
+    </a>
+  </div>
+</div>
+{% endblock %}
